@@ -99,7 +99,7 @@ namespace WiiBalanceScale
             BoardTimer = new System.Windows.Forms.Timer();
             BoardTimer.Interval = 50;
             BoardTimer.Tick += new System.EventHandler(BoardTimer_Tick);
-            BoardTimer.Start();
+            BoardTimer.Start(); 
 
             Application.Run(f);
             Shutdown();
@@ -109,6 +109,20 @@ namespace WiiBalanceScale
         {
             if (BoardTimer != null) { BoardTimer.Stop(); BoardTimer = null; }
             if (cm != null) { cm.Cancel(); cm = null; }
+            
+            if (bb != null)
+            {
+                try
+                {
+                    // Turn off the blue LED and drop the connection
+                    bb.SetLEDs(0);
+                    bb.Disconnect();
+                }
+                catch 
+                { 
+                }
+            }
+
             if (f != null) { if (f.Visible) f.Close(); f = null; }
         }
 
@@ -146,7 +160,6 @@ namespace WiiBalanceScale
             for (int i = 0; i < History.Length; i++)
                 History[i] = (i > HistoryCursor ? float.MinValue : ZeroedWeight);
         }
-
         static void BoardTimer_Tick(object sender, System.EventArgs e)
         {
             if (cm != null)
